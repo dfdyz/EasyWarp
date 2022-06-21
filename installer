@@ -5,7 +5,7 @@ local fs = require("filesystem")
 local Disk_ALL = component.list("filesystem",true)
 local i,Disk_list = 1,{}
 
-local URL = "https://gitee.com/jvn/Easy_warp/raw/master"
+local URL = "https://raw.githubusercontent.com/dfdyz/EasyWarp/main"
 
 local function gitee_get(url)
     local _, response = pcall(internet.request, url, nil, { ["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36" })
