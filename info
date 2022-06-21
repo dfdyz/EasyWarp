@@ -1,0 +1,1 @@
+{version="1.0.5",update="\n1.新增设置核心状态功能\n2.稳定性提升\n\ntips:新功能的bug还未知,慎用",path={"/lib"},file={"/init.lua","/lib/main.lua","/lib/serialization.lua"}}
