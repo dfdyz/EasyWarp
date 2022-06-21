@@ -1,0 +1,69 @@
+local internet = require("internet")
+local component = require("component")
+local serialization = require("serialization")
+local fs = require("filesystem")
+local Disk_ALL = component.list("filesystem",true)
+local i,Disk_list = 1,{}
+
+local URL = "https://gitee.com/jvn/Easy_warp/raw/master"
+
+local function gitee_get(url)
+    local _, response = pcall(internet.request, url, nil, { ["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36" })
+    local a = ""
+    for chunk in response do a = a..chunk end
+    return a
+end
+
+print("ALL Filesystem")
+for k,v in fs.mounts(Disk_ALL) do
+    print(i,k.address)
+    Disk_list[i] = k.address
+    i=i+1
+end
+print("Choose:")
+local tag = io.stdin:read()
+if type(Disk_list[tonumber(tag)]) ~= "string" then
+    return
+end
+local install_fs = component.proxy(Disk_list[tonumber(tag)])
+print("Get info ...")
+local info_string = gitee_get(URL.."/info")
+if info_string == "" then
+    return
+end
+local info = serialization.unserialize(info_string)
+print("===============Info================")
+print("Version:"..info.version)
+print("Update:"..info.update)
+print("===================================")
+os.sleep(1)
+
+local function write_to_file(path,strings)
+    install_fs.remove(path)
+    local handle = install_fs.open(path,"w")
+    install_fs.write(handle,strings)
+    install_fs.close(handle)
+end
+local function install_OS()
+    print("\n===============Install================\n")
+    for _,v in ipairs(info.path) do
+        print("Making directory: "..v)
+        install_fs.makeDirectory(v)
+    end
+    for _,v in ipairs(info.file) do
+        print("Download file: "..URL.."/EasyWarp"..v)
+        local res = gitee_get(URL.."/EasyWarp"..v)
+        print("Write to file: "..v)
+        write_to_file(v,res)
+    end
+    print("Finished")
+end
+
+print("\n")
+print("Do you want to install [Easy Warp "..info.version.."]   (Y/N)")
+local Y_N = io.stdin:read()
+if Y_N == "Y" or Y_N == "y" then
+    install_OS()
+else
+    print("Install canceled.")
+end
