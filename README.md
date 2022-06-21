@@ -16,6 +16,7 @@ w
 
 逐次运行（OC里面）
 wget https://raw.githubusercontent.com/dfdyz/EasyWarp/main/installer
+
 installer
 
 使用说明
